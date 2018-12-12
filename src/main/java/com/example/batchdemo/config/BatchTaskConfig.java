@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -18,6 +17,8 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -26,8 +27,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.example.batchdemo.task.TestChunkReader;
+import com.example.batchdemo.task.TestChunkWriter;
 import com.example.batchdemo.task.TestReader;
-import com.example.batchdemo.task.TestWriter;
 
 @Configuration
 @EnableBatchProcessing
@@ -48,7 +50,7 @@ public class BatchTaskConfig {
 	@Qualifier("sqlTransactionManager")
 	private PlatformTransactionManager transactionManager;
 
-	@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "*/10 * * * * *")
 	public void dataManagementScheduling() throws JobExecutionAlreadyRunningException, JobRestartException,
 		JobInstanceAlreadyCompleteException, JobParametersInvalidException {
 		logger.info("*********dataManagementScheduling Start : " + new Date() + "*********");
@@ -63,11 +65,6 @@ public class BatchTaskConfig {
 		return jobBuilderFactory.get("testJob")
 			.start(testReadStep())
 			.next(testWriteStep())
-				.on("CONTINUE")
-				.to(testWriteStep())
-				.on(ExitStatus.COMPLETED.getExitCode())
-				.end()
-			.end()
 			.build();
 	}
 
@@ -82,7 +79,9 @@ public class BatchTaskConfig {
 	public Step testWriteStep() {
 		return stepBuilderFactory.get("testWriteStep")
 			.transactionManager(transactionManager)
-			.tasklet(testWriter())
+			.<String, String>chunk(1)
+			.reader(testChunkReader())
+			.writer(testChunkWriter())
 			.build();
 	}
 
@@ -92,7 +91,12 @@ public class BatchTaskConfig {
 	}
 
 	@Bean
-	public Tasklet testWriter() {
-		return new TestWriter();
+	public ItemReader<String> testChunkReader() {
+		return new TestChunkReader();
+	}
+
+	@Bean
+	public ItemWriter<String> testChunkWriter() {
+		return new TestChunkWriter();
 	}
 }
