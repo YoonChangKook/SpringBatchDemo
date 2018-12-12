@@ -17,16 +17,16 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.transaction.PlatformTransactionManager;
 
+import com.example.batchdemo.task.TestChunkProcessor;
 import com.example.batchdemo.task.TestChunkReader;
 import com.example.batchdemo.task.TestChunkWriter;
 import com.example.batchdemo.task.TestReader;
@@ -45,10 +45,6 @@ public class BatchTaskConfig {
 
 	@Autowired
 	private JobLauncher jobLauncher;
-
-	@Autowired
-	@Qualifier("sqlTransactionManager")
-	private PlatformTransactionManager transactionManager;
 
 	@Scheduled(cron = "*/10 * * * * *")
 	public void dataManagementScheduling() throws JobExecutionAlreadyRunningException, JobRestartException,
@@ -78,9 +74,9 @@ public class BatchTaskConfig {
 	@Bean
 	public Step testWriteStep() {
 		return stepBuilderFactory.get("testWriteStep")
-			.transactionManager(transactionManager)
-			.<String, String>chunk(1)
+			.<String, String>chunk(4)
 			.reader(testChunkReader())
+			.processor(testChunkProcessor())
 			.writer(testChunkWriter())
 			.build();
 	}
@@ -93,6 +89,11 @@ public class BatchTaskConfig {
 	@Bean
 	public ItemReader<String> testChunkReader() {
 		return new TestChunkReader();
+	}
+
+	@Bean
+	public ItemProcessor<String, String> testChunkProcessor() {
+		return new TestChunkProcessor();
 	}
 
 	@Bean
