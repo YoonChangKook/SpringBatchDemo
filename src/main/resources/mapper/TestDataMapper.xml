@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.batchdemo.repository.TestDataDAO">
+    <insert id="insertData" parameterType="String">
+        INSERT INTO test_db.test_table (
+        data
+        ) VALUES (
+        #{data}
+        )
+    </insert>
+
+    <select id="selectAll" resultType="String">
+        SELECT data
+        FROM test_db.test_table
+    </select>
+
+    <delete id="deleteAll">
+        DELETE FROM test_db.test_table
+    </delete>
+</mapper>
