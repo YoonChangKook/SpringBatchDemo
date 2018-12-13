@@ -40,21 +40,21 @@ public class TestWriter implements Tasklet, StepExecutionListener {
 		logger.info("INSERT !@#!@#");
 		testDataDAO.insertData(data);
 
-		if(data.equals("Test str3")) {
-			throw new IllegalStateException("TEST");
-		}
+//		if(data.equals("Test str3")) {
+//			throw new IllegalStateException("TEST");
+//		}
 
-		return RepeatStatus.FINISHED;
+		if(this.datas.isEmpty()) {
+			logger.info("Test writer ended.");
+			return RepeatStatus.FINISHED;
+		} else {
+			logger.info("Test writer repeat. " + this.datas.size());
+			return RepeatStatus.CONTINUABLE;
+		}
 	}
 
 	@Override
 	public ExitStatus afterStep(StepExecution stepExecution) {
-		if(this.datas.isEmpty()) {
-			logger.info("Test writer ended.");
-			return ExitStatus.COMPLETED;
-		} else {
-			logger.info("Test writer continue. " + this.datas.size());
-			return new ExitStatus("CONTINUE");
-		}
+		return ExitStatus.COMPLETED;
 	}
 }

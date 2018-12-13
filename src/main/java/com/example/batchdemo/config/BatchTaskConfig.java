@@ -63,11 +63,6 @@ public class BatchTaskConfig {
 		return jobBuilderFactory.get("testJob")
 			.start(testReadStep())
 			.next(testWriteStep())
-				.on("CONTINUE")
-				.to(testWriteStep())
-				.on(ExitStatus.COMPLETED.getExitCode())
-				.end()
-			.end()
 			.build();
 	}
 
