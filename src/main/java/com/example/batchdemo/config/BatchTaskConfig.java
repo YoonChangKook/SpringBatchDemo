@@ -48,7 +48,7 @@ public class BatchTaskConfig {
 	@Qualifier("sqlTransactionManager")
 	private PlatformTransactionManager transactionManager;
 
-	@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "*/10 * * * * *")
 	public void dataManagementScheduling() throws JobExecutionAlreadyRunningException, JobRestartException,
 		JobInstanceAlreadyCompleteException, JobParametersInvalidException {
 		logger.info("*********dataManagementScheduling Start : " + new Date() + "*********");

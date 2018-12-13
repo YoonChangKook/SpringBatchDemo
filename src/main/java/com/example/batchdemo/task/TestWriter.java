@@ -40,9 +40,9 @@ public class TestWriter implements Tasklet, StepExecutionListener {
 		logger.info("INSERT !@#!@#");
 		testDataDAO.insertData(data);
 
-//		if(this.datas.size() == 1) {
-//			throw new IllegalStateException("TEST");
-//		}
+		if(data.equals("Test str3")) {
+			throw new IllegalStateException("TEST");
+		}
 
 		return RepeatStatus.FINISHED;
 	}
