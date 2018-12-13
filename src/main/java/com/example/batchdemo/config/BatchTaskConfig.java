@@ -21,10 +21,12 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import com.example.batchdemo.task.TestChunkProcessor;
 import com.example.batchdemo.task.TestChunkReader;
@@ -32,7 +34,6 @@ import com.example.batchdemo.task.TestChunkWriter;
 import com.example.batchdemo.task.TestReader;
 
 @Configuration
-@EnableBatchProcessing
 @Import(DataBaseConfig.class)
 public class BatchTaskConfig {
 	private static final Logger logger = LoggerFactory.getLogger(BatchTaskConfig.class);
@@ -45,6 +46,10 @@ public class BatchTaskConfig {
 
 	@Autowired
 	private JobLauncher jobLauncher;
+
+	@Autowired
+	@Qualifier("sqlTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	@Scheduled(cron = "*/10 * * * * *")
 	public void dataManagementScheduling() throws JobExecutionAlreadyRunningException, JobRestartException,
@@ -74,7 +79,8 @@ public class BatchTaskConfig {
 	@Bean
 	public Step testWriteStep() {
 		return stepBuilderFactory.get("testWriteStep")
-			.<String, String>chunk(4)
+			.transactionManager(transactionManager)
+			.<String, String>chunk(2)
 			.reader(testChunkReader())
 			.processor(testChunkProcessor())
 			.writer(testChunkWriter())
