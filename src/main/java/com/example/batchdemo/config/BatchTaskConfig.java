@@ -74,7 +74,7 @@ public class BatchTaskConfig {
 	@Bean
 	public Step testWriteStep() {
 		return stepBuilderFactory.get("testWriteStep")
-			.<String, String>chunk(4)
+			.<String, String>chunk(2)
 			.reader(testChunkReader())
 			.processor(testChunkProcessor())
 			.writer(testChunkWriter())
