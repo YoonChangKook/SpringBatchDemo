@@ -29,7 +29,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import com.example.batchdemo.task.TestChunkProcessor;
 import com.example.batchdemo.task.TestChunkReader;
 import com.example.batchdemo.task.TestChunkWriter;
-import com.example.batchdemo.task.TestReader;
+import com.example.batchdemo.task.TestTasklet;
 
 @Configuration
 @EnableBatchProcessing
@@ -83,7 +83,7 @@ public class BatchTaskConfig {
 
 	@Bean
 	public Tasklet testReader() {
-		return new TestReader();
+		return new TestTasklet();
 	}
 
 	@Bean

@@ -1,8 +1,6 @@
 package com.example.batchdemo.task;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 import org.slf4j.Logger;
@@ -18,8 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.batchdemo.repository.TestDataDAO;
 
-public class TestReader implements Tasklet, StepExecutionListener {
-	private final Logger logger = LoggerFactory.getLogger(TestReader.class);
+public class TestTasklet implements Tasklet, StepExecutionListener {
+	private final Logger logger = LoggerFactory.getLogger(TestTasklet.class);
 
 	private Queue<String> datas;
 
