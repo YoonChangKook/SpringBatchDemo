@@ -33,10 +33,10 @@ public class TestTasklet implements Tasklet, StepExecutionListener {
 
 	@Override
 	public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-		datas.add("Test str1");
-		datas.add("Test str2");
-		datas.add("Test str3");
-		datas.add("Test str4 !@#");
+		datas.add("손근우");
+		datas.add("국윤창");
+		datas.add("김동철");
+		datas.add("조현욱");
 		return RepeatStatus.FINISHED;
 	}
 

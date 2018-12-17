@@ -59,20 +59,20 @@ public class BatchTaskConfig {
 	@Bean
 	public Job testJob() {
 		return jobBuilderFactory.get("testJob")
-			.start(testReadStep())
-			.next(testWriteStep())
+			.start(testStep1())
+			.next(testStep2())
 			.build();
 	}
 
 	@Bean
-	public Step testReadStep() {
+	public Step testStep1() {
 		return stepBuilderFactory.get("testReadStep")
-			.tasklet(testReader())
+			.tasklet(testTasklet())
 			.build();
 	}
 
 	@Bean
-	public Step testWriteStep() {
+	public Step testStep2() {
 		return stepBuilderFactory.get("testWriteStep")
 			.<String, String>chunk(2)
 			.reader(testChunkReader())
@@ -82,7 +82,7 @@ public class BatchTaskConfig {
 	}
 
 	@Bean
-	public Tasklet testReader() {
+	public Tasklet testTasklet() {
 		return new TestTasklet();
 	}
 

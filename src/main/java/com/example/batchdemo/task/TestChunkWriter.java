@@ -20,8 +20,8 @@ public class TestChunkWriter implements ItemWriter<String> {
 		logger.info("Chunk Write Count: {}", list.size());
 		for(String data : list) {
 			testDataDAO.insertData(data);
-//			if(data.equals("Test str4 !@#")) {
-//				throw new IllegalStateException("Test Exception");
+//			if(data.equals("조현욱")) {
+//				throw new IllegalStateException(data + " Exception");
 //			}
 		}
 	}
