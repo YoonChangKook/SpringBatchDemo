@@ -35,10 +35,11 @@ public class TestWriter implements Tasklet, StepExecutionListener {
 	}
 
 	@Override
-	public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) {
+	public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws InterruptedException {
 		String data = this.datas.poll();
 		logger.info("INSERT !@#!@#");
 		testDataDAO.insertData(data);
+		Thread.sleep(5000);
 
 //		if(data.equals("Test str3")) {
 //			throw new IllegalStateException("TEST");

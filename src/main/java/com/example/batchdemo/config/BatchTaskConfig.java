@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.example.batchdemo.task.TestParallel;
 import com.example.batchdemo.task.TestReader;
 import com.example.batchdemo.task.TestWriter;
 
@@ -49,13 +50,23 @@ public class BatchTaskConfig {
 	private PlatformTransactionManager transactionManager;
 
 	@Scheduled(cron = "*/10 * * * * *")
-	public void dataManagementScheduling() throws JobExecutionAlreadyRunningException, JobRestartException,
+	public void testScheduling() throws JobExecutionAlreadyRunningException, JobRestartException,
 		JobInstanceAlreadyCompleteException, JobParametersInvalidException {
-		logger.info("*********dataManagementScheduling Start : " + new Date() + "*********");
+		logger.info("*********testScheduling Start : " + new Date() + "*********");
 		JobParameters param = new JobParametersBuilder().addString("JobID",
 			String.valueOf(System.currentTimeMillis())).toJobParameters();
 		jobLauncher.run(testJob(), param);
-		logger.info("*********dataManagementScheduling End : " + new Date() + "*********");
+		logger.info("*********testScheduling End : " + new Date() + "*********");
+	}
+
+	@Scheduled(cron = "* * * * * *")
+	public void testScheduling2() throws JobExecutionAlreadyRunningException, JobRestartException,
+		JobInstanceAlreadyCompleteException, JobParametersInvalidException {
+		logger.info("*********testScheduling2 Start : " + new Date() + "*********");
+		JobParameters param = new JobParametersBuilder().addString("JobID",
+			String.valueOf(System.currentTimeMillis())).toJobParameters();
+		jobLauncher.run(testJob2(), param);
+		logger.info("*********testScheduling2 End : " + new Date() + "*********");
 	}
 
 	@Bean
@@ -63,6 +74,13 @@ public class BatchTaskConfig {
 		return jobBuilderFactory.get("testJob")
 			.start(testReadStep())
 			.next(testWriteStep())
+			.build();
+	}
+
+	@Bean
+	public Job testJob2() {
+		return jobBuilderFactory.get("testJob2")
+			.start(testParallelStep())
 			.build();
 	}
 
@@ -78,6 +96,13 @@ public class BatchTaskConfig {
 		return stepBuilderFactory.get("testWriteStep")
 			.transactionManager(transactionManager)
 			.tasklet(testWriter())
+			.build();
+	}
+
+	@Bean
+	public Step testParallelStep() {
+		return stepBuilderFactory.get("testParallelStep")
+			.tasklet(new TestParallel())
 			.build();
 	}
 
